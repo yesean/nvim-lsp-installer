@@ -40,19 +40,19 @@ local create_vader = _.memoize(
     function(saber_ticks)
     -- stylua: ignore start
     return {
-        { { [[ _________________________________________________________________________________________ ]], "LspInstallerMuted" } },
-        { { [[ < Help sponsor nvim-lsp-installer development! ]], "LspInstallerMuted" }, { "https://github.com/sponsors/williamboman", "LspInstallerHighlighted"}, {[[ > ]], "LspInstallerMuted" } },
-        { { [[ < Help sponsor neovim development! ]], "LspInstallerMuted" }, { "https://github.com/sponsors/neovim", "LspInstallerHighlighted"}, {[[                   > ]], "LspInstallerMuted" } },
-        { { [[ ----------------------------------------------------------------------------------------- ]], "LspInstallerMuted" } },
-        { { [[        ]], ""}, {[[\]], saber_ticks >= 3 and "LspInstallerVaderSaber" or "LspInstallerMuted"}, {[[    ,-^-.                                                       ]], "LspInstallerMuted" } },
-        { { [[         ]], ""}, {[[\]], saber_ticks >= 2 and "LspInstallerVaderSaber" or "LspInstallerMuted"}, {[[   !oYo!                                                       ]], "LspInstallerMuted" } },
-        { { [[          ]], ""}, {[[\]], saber_ticks >= 1 and "LspInstallerVaderSaber" or "LspInstallerMuted"}, {[[ /./=\.\______                                                ]], "LspInstallerMuted" } },
-        { { [[               ##        )\/\                                            ]], "LspInstallerMuted" } },
-        { { [[                ||-----w||                                               ]], "LspInstallerMuted" } },
-        { { [[                ||      ||                                               ]], "LspInstallerMuted" } },
-        { { [[                                                                         ]], "LspInstallerMuted" } },
-        { { [[         Cowth Vader (alleged Neovim user)                               ]], "LspInstallerMuted" } },
-        { { [[                                                                         ]], "LspInstallerMuted" } },
+      { { [[ _________________________________________________________________________________________ ]], "LspInstallerMuted" } },
+      { { [[ < Help sponsor nvim-lsp-installer development! ]], "LspInstallerMuted" }, { "https://github.com/sponsors/williamboman", "LspInstallerHighlighted" }, { [[ > ]], "LspInstallerMuted" } },
+      { { [[ < Help sponsor neovim development! ]], "LspInstallerMuted" }, { "https://github.com/sponsors/neovim", "LspInstallerHighlighted" }, { [[                   > ]], "LspInstallerMuted" } },
+      { { [[ ----------------------------------------------------------------------------------------- ]], "LspInstallerMuted" } },
+      { { [[        ]], "" }, { [[\]], saber_ticks >= 3 and "LspInstallerVaderSaber" or "LspInstallerMuted" }, { [[    ,-^-.                                                       ]], "LspInstallerMuted" } },
+      { { [[         ]], "" }, { [[\]], saber_ticks >= 2 and "LspInstallerVaderSaber" or "LspInstallerMuted" }, { [[   !oYo!                                                       ]], "LspInstallerMuted" } },
+      { { [[          ]], "" }, { [[\]], saber_ticks >= 1 and "LspInstallerVaderSaber" or "LspInstallerMuted" }, { [[ /./=\.\______                                                ]], "LspInstallerMuted" } },
+      { { [[               ##        )\/\                                            ]], "LspInstallerMuted" } },
+      { { [[                ||-----w||                                               ]], "LspInstallerMuted" } },
+      { { [[                ||      ||                                               ]], "LspInstallerMuted" } },
+      { { [[                                                                         ]], "LspInstallerMuted" } },
+      { { [[         Cowth Vader (alleged Neovim user)                               ]], "LspInstallerMuted" } },
+      { { [[                                                                         ]], "LspInstallerMuted" } },
     }
         -- stylua: ignore end
     end
@@ -768,6 +768,16 @@ local function init(all_servers)
                     async_populate_server_metadata(server.name)
                 end
             end)
+
+            -- start lsp client when lsp finishes installing
+            local filetypes =
+                require(string.format("lspconfig.server_configurations.%s", server.name)).default_config.filetypes
+            vim.pretty_print("filetypes:", filetypes)
+            if vim.tbl_contains(filetypes, vim.bo.filetype) then
+                print("starting lsp for ", vim.bo.filetype)
+                vim.cmd "LspStart"
+            end
+
             on_complete()
         end)
     end
