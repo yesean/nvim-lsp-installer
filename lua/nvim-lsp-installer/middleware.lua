@@ -59,6 +59,7 @@ function M.register_lspconfig_hook()
             elseif should_auto_install(server.name) then
                 notify("(automatic installation) Installing LSP server: " .. server.name)
                 server:install()
+                merge_in_place(config, server._default_options)
             end
         end
 
